@@ -78,12 +78,37 @@ def delete_contact(contacts: list[dict[str, str | None]]) -> None:
         print("You enter empty name")
         return
     for person in contacts:
-        print(F'DB del {del_name} person {person['name']}')
         if del_name == person["name"]:
             contacts.remove(person)
-            print('Succefully delete')
+            print("Succefully delete")
             return None
-    print(f'There is not {del_name} person')
+    print(f"There is not {del_name} person")
+
+
+def search_next() -> bool:
+    print("Press 1 to continue search and other key too stop")
+    print("> ", end="", flush=True)
+    num = sys.stdin.readline().strip()
+    if num == "1":
+        return True
+    return False
+
+
+def search_contact(contacts: list[dict[str, str | None]]) -> None:
+    stop: bool = True
+    while stop:
+        print("Enter your name")
+        name: str = get_name()
+        for person in contacts:
+            if name == person["name"]:
+                print("=========================")
+                print(f"Name:  {person['name']}")
+                print(f"Email: {person['email']}")
+                print(f"Phone: {person['phone']}")
+                print("=========================\n")
+                return 
+        print(f"There is not {name}")
+        stop = search_next()
 
 
 def choosen_option(pick: int, contact: list[dict[str, str | None]]) -> None:
@@ -93,8 +118,15 @@ def choosen_option(pick: int, contact: list[dict[str, str | None]]) -> None:
         add_contact(contact)
     elif pick == 3:
         delete_contact(contact)
+    elif pick == 4:
+        search_contact(contact)
+    elif pick == 5:
+        print('Under devloping')
+        # update_contact(contact)
+    elif pick == 9:
+        print('Exiting.....')
     else:
-        print("Under devloping")
+        print("TRY 1-5 and 9 to exit")
 
 
 def menu(contact: list[dict[str, str | None]]) -> None:
@@ -104,6 +136,8 @@ def menu(contact: list[dict[str, str | None]]) -> None:
         print("1.) View")
         print("2.) Add")
         print("3.) Delete")
+        print("4.) Search")
+        # print("5.) Update")
         print("9.) Exit")
         pick: int = get_choice()
         choosen_option(pick=pick, contact=contact)
