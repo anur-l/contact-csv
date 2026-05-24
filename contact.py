@@ -46,14 +46,14 @@ def get_email() -> str:
 def get_choice() -> int:
     attempt: int = 0
     while MAX_ATTEMPT >= attempt:
-        print('> ',end="",flush=True)
+        print("> ", end="", flush=True)
         try:
             num = int(sys.stdin.readline())
             return num
         except ValueError:
             attempt += 1
     print("Exiting due user fail to chose option")
-    return 3
+    return 9
 
 
 def add_contact(contact: list[dict[str, str | None]]) -> None:
@@ -63,19 +63,36 @@ def add_contact(contact: list[dict[str, str | None]]) -> None:
     email: str = get_email()
     print("Enter your Phone")
     num = get_num()
-    print(f'{num}')
+    print(f"{num}")
     if name == "" or num is None:
         print("Unalbe to save contact")
         return None
     contact.append({"name": name, "phone": num, "email": email})
-    print(f'Succefully added{contact[-1]}')
+    print(f"Succefully added{contact[-1]}")
+
+
+def delete_contact(contacts: list[dict[str, str | None]]) -> None:
+    print("Enter the name you want to delete:")
+    del_name = get_name()
+    if del_name == "":
+        print("You enter empty name")
+        return
+    for person in contacts:
+        print(F'DB del {del_name} person {person['name']}')
+        if del_name == person["name"]:
+            contacts.remove(person)
+            print('Succefully delete')
+            return None
+    print(f'There is not {del_name} person')
 
 
 def choosen_option(pick: int, contact: list[dict[str, str | None]]) -> None:
     if pick == 1:
         view_contact(contact)
     elif pick == 2:
-        add_contact(contact) 
+        add_contact(contact)
+    elif pick == 3:
+        delete_contact(contact)
     else:
         print("Under devloping")
 
@@ -86,10 +103,11 @@ def menu(contact: list[dict[str, str | None]]) -> None:
         print("=== Contact info ===")
         print("1.) View")
         print("2.) Add")
-        print("3.) Exit")
+        print("3.) Delete")
+        print("9.) Exit")
         pick: int = get_choice()
         choosen_option(pick=pick, contact=contact)
-        if pick == 3:
+        if pick == 9:
             state = False
 
 
