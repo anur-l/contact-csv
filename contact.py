@@ -1,10 +1,9 @@
 import sys
 
-
 MAX_ATTEMPT: int = 3
 
 
-def view_contact(contact: list[dict[str, str]]) -> None:
+def view_contact(contact: list[dict[str, str | None]]) -> None:
     print("=== === === === === ===")
     no: int = 1
     for i in contact:
@@ -47,6 +46,7 @@ def get_email() -> str:
 def get_choice() -> int:
     attempt: int = 0
     while MAX_ATTEMPT >= attempt:
+        print('> ',end="",flush=True)
         try:
             num = int(sys.stdin.readline())
             return num
@@ -56,16 +56,31 @@ def get_choice() -> int:
     return 3
 
 
-def choosen_option(pick: int, contact: list[dict[str, str]]) -> None:
+def add_contact(contact: list[dict[str, str | None]]) -> None:
+    print("Enter your name")
+    name: str = get_name()
+    print("Enter your email")
+    email: str = get_email()
+    print("Enter your Phone")
+    num = get_num()
+    print(f'{num}')
+    if name == "" or num is None:
+        print("Unalbe to save contact")
+        return None
+    contact.append({"name": name, "phone": num, "email": email})
+    print(f'Succefully added{contact[-1]}')
+
+
+def choosen_option(pick: int, contact: list[dict[str, str | None]]) -> None:
     if pick == 1:
         view_contact(contact)
     elif pick == 2:
-        print("Under devloping")
+        add_contact(contact) 
     else:
         print("Under devloping")
 
 
-def menu(contact: list[dict[str, str]]) -> None:
+def menu(contact: list[dict[str, str | None]]) -> None:
     state: bool = True
     while state:
         print("=== Contact info ===")
@@ -73,13 +88,13 @@ def menu(contact: list[dict[str, str]]) -> None:
         print("2.) Add")
         print("3.) Exit")
         pick: int = get_choice()
-        choosen_option(pick=pick,contact=contact)
+        choosen_option(pick=pick, contact=contact)
         if pick == 3:
             state = False
 
 
 def main() -> None:
-    list_person: list[dict[str, str]] = [
+    list_person: list[dict[str, str | None]] = [
         {"name": "Ahmed", "phone": "89892", "email": "test@info.com"},
         {"name": "Faisal", "phone": "67676", "email": "fa@11dev.com"},
         {"name": "Mariam", "phone": "93284", "email": "mar0@mail.com"},
