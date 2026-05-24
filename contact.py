@@ -106,9 +106,60 @@ def search_contact(contacts: list[dict[str, str | None]]) -> None:
                 print(f"Email: {person['email']}")
                 print(f"Phone: {person['phone']}")
                 print("=========================\n")
-                return 
+                return
         print(f"There is not {name}")
         stop = search_next()
+
+
+def get_update_option() -> int | None:
+    attempt: int = 0
+    while MAX_ATTEMPT >= attempt:
+        print("> ", end="", flush=True)
+        try:
+            num = int(sys.stdin.readline())
+            if num > 3 or num < 1:
+                attempt += 1
+                continue
+            return num
+        except ValueError:
+            attempt += 1
+    print("Exiting due user fail to chose option")
+    return None
+
+
+def update_contact(contacts: list[dict[str, str | None]]) -> None:
+    print("Enter your name")
+    name: str = get_name()
+    for person in contacts:
+        if name == person["name"]:
+            print("=========================")
+            print(f"Name:  {person['name']}")
+            print(f"Email: {person['email']}")
+            print(f"Phone: {person['phone']}")
+            print("=========================\n")
+            print("Chose the field you want to update")
+            print("1 - > Name")
+            print("2 - > Email")
+            print("3 - > Phone")
+            chose: int | None = get_update_option()
+            if chose is None:
+                print("Unable to update user fail to give correct info")
+                return
+            if chose == 1:
+                name = get_name()
+                if name != "":
+                    person["name"] = name
+                print('Unable to update name')
+                return
+            elif chose == 2:
+                person["email"] = get_email()
+            else:
+                num: str | None = get_num()
+                if num is None:
+                    print('Unable to update num')
+                    return 
+                person["phone"] = num 
+    print(f"There is not {name}")
 
 
 def choosen_option(pick: int, contact: list[dict[str, str | None]]) -> None:
@@ -121,10 +172,9 @@ def choosen_option(pick: int, contact: list[dict[str, str | None]]) -> None:
     elif pick == 4:
         search_contact(contact)
     elif pick == 5:
-        print('Under devloping')
-        # update_contact(contact)
+        update_contact(contact)
     elif pick == 9:
-        print('Exiting.....')
+        print("Exiting.....")
     else:
         print("TRY 1-5 and 9 to exit")
 
@@ -137,7 +187,7 @@ def menu(contact: list[dict[str, str | None]]) -> None:
         print("2.) Add")
         print("3.) Delete")
         print("4.) Search")
-        # print("5.) Update")
+        print("5.) Update")
         print("9.) Exit")
         pick: int = get_choice()
         choosen_option(pick=pick, contact=contact)

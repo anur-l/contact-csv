@@ -16,3 +16,6 @@ for person in list_person:
         break
 for person in list_person:
     print(f"Found match! Phone: {person['name']}")
+
+
+print(f'{list_person[1]}')
