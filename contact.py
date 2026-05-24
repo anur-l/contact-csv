@@ -36,6 +36,10 @@ def get_num() -> str | None:
     print('Unable to save try again later')
     return None 
 
+def get_email() -> str:
+    print('> ',end="",flush=True)
+    email:str = sys.stdin.readline().strip()
+    return email
 
 def menu() -> None:
     state:bool = True 
