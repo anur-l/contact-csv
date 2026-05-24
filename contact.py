@@ -15,9 +15,26 @@ def view_contact(contact :list[dict[str,str]])-> None:
 
 def get_name() -> str:
     print('> ',end="",flush=True)
-    name:str = sys.stdin.readline()
+    name:str = sys.stdin.readline().strip()
     return name 
-        
+
+def get_num() -> str | None:
+    print('Phone no:')
+    attempt: int = 0
+    while MAX_ATTEMPT >= attempt:
+        try:
+            num = int(sys.stdin.readline())
+            num = str(num)
+            if len(num) != 5:
+                print('It must be 5 digit number')
+                print('>',end="",flush=True)
+                attempt += 1
+                continue
+            return num 
+        except ValueError:
+            attempt +=1
+    print('Unable to save try again later')
+    return None 
 
 
 def menu() -> None:
@@ -26,7 +43,7 @@ def menu() -> None:
         print("=== Contact info ===")
         print("1.) View")
         print("2.) Add")
-
+        state = False
 
 
 
