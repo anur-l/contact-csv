@@ -12,6 +12,19 @@ def view_contact(contact: list[dict[str, str | None]]) -> None:
     print("=== === === === === ===")
 
 
+def view_detail_contact(contact: list[dict[str, str | None]]) -> None:
+    print("=== === === === === ===")
+    no: int = 1
+    for i in contact:
+        print("==========================")
+        print(f"|{no}| Name: {i['name']}")
+        print(f"|{no}| Phone: {i['phone']}")
+        print(f"|{no}| Email: {i['email']}")
+        print("==========================")
+        no += 1
+    print("=== === === === === ===")
+
+
 def get_name() -> str:
     print("> ", end="", flush=True)
     name: str = sys.stdin.readline().strip()
@@ -21,7 +34,7 @@ def get_name() -> str:
 def get_num() -> str | None:
     print("Phone no:")
     attempt: int = 0
-    while MAX_ATTEMPT >= attempt:
+    while MAX_ATTEMPT > attempt:
         try:
             num = int(sys.stdin.readline())
             num = str(num)
@@ -45,15 +58,19 @@ def get_email() -> str:
 
 def get_choice() -> int:
     attempt: int = 0
-    while MAX_ATTEMPT >= attempt:
+    while MAX_ATTEMPT > attempt:
         print("> ", end="", flush=True)
         try:
             num = int(sys.stdin.readline())
+            if num < 1 or num > 7:
+                print("It should be 1-7")
+                attempt += 1
+                continue
             return num
         except ValueError:
             attempt += 1
     print("Exiting due user fail to chose option")
-    return 9
+    return 7
 
 
 def add_contact(contact: list[dict[str, str | None]]) -> None:
@@ -99,6 +116,7 @@ def search_contact(contacts: list[dict[str, str | None]]) -> None:
     while stop:
         print("Enter your name")
         name: str = get_name()
+        found: bool = False
         for person in contacts:
             if name == person["name"]:
                 print("=========================")
@@ -106,14 +124,16 @@ def search_contact(contacts: list[dict[str, str | None]]) -> None:
                 print(f"Email: {person['email']}")
                 print(f"Phone: {person['phone']}")
                 print("=========================\n")
-                return
+                found = True
+        if found:
+            return
         print(f"There is not {name}")
         stop = search_next()
 
 
 def get_update_option() -> int | None:
     attempt: int = 0
-    while MAX_ATTEMPT >= attempt:
+    while MAX_ATTEMPT > attempt:
         print("> ", end="", flush=True)
         try:
             num = int(sys.stdin.readline())
@@ -147,18 +167,21 @@ def update_contact(contacts: list[dict[str, str | None]]) -> None:
                 return
             if chose == 1:
                 name = get_name()
-                if name != "":
-                    person["name"] = name
-                print('Unable to update name')
+                if name == "":
+                    print("Unable to update name")
+                    return
+                person["name"] = name
                 return
             elif chose == 2:
                 person["email"] = get_email()
+                return
             else:
                 num: str | None = get_num()
                 if num is None:
-                    print('Unable to update num')
-                    return 
-                person["phone"] = num 
+                    print("Unable to update num")
+                    return
+                person["phone"] = num
+                return
     print(f"There is not {name}")
 
 
@@ -173,10 +196,12 @@ def choosen_option(pick: int, contact: list[dict[str, str | None]]) -> None:
         search_contact(contact)
     elif pick == 5:
         update_contact(contact)
-    elif pick == 9:
+    elif pick == 6:
+        view_detail_contact(contact)
+    elif pick == 7:
         print("Exiting.....")
     else:
-        print("TRY 1-5 and 9 to exit")
+        print("TRY 1-7")
 
 
 def menu(contact: list[dict[str, str | None]]) -> None:
@@ -188,10 +213,12 @@ def menu(contact: list[dict[str, str | None]]) -> None:
         print("3.) Delete")
         print("4.) Search")
         print("5.) Update")
-        print("9.) Exit")
+        print("6.) View all")
+        print("7.) Exit")
+        print("====================")
         pick: int = get_choice()
         choosen_option(pick=pick, contact=contact)
-        if pick == 9:
+        if pick == 7:
             state = False
 
 
