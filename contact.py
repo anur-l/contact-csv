@@ -1,11 +1,35 @@
 import sys
+import csv
 
 MAX_ATTEMPT: int = 3
+FILE_NAME: str = "contact.csv"
 
 
-def view_contact(contact: list[dict[str, str | None]]) -> None:
+def read_csv_file() -> list[dict[str, str]]:
+    contacts: list[dict[str, str]] = []
+    with open(FILE_NAME) as f:
+        reader = csv.DictReader(f)
+        first_row = next(reader, None)
+        if first_row is None:
+            return []
+        contacts.append(
+            {
+                "name": first_row["name"],
+                "email": first_row["email"],
+                "phone": first_row["phone"],
+            }
+        )
+        for line in reader:
+            contacts.append(
+                {"name": line["name"], "email": line["email"], "phone": line["phone"]}
+            )
+    return contacts
+
+
+def view_contact() -> None:
     print("=== === === === === ===")
     no: int = 1
+    contact:list[dict[str,str]] = read_csv_file()
     for i in contact:
         print(f"|{no}| Name: {i['name']}")
         no += 1
@@ -187,7 +211,7 @@ def update_contact(contacts: list[dict[str, str | None]]) -> None:
 
 def choosen_option(pick: int, contact: list[dict[str, str | None]]) -> None:
     if pick == 1:
-        view_contact(contact)
+        view_contact()
     elif pick == 2:
         add_contact(contact)
     elif pick == 3:
