@@ -8,18 +8,10 @@ FILE_NAME: str = "contact.csv"
 
 def read_csv_file() -> list[dict[str, str]]:
     contacts: list[dict[str, str]] = []
+    if not os.path.exists(FILE_NAME):
+        return []
     with open(FILE_NAME) as f:
         reader = csv.DictReader(f)
-        first_row = next(reader, None)
-        if first_row is None:
-            return []
-        contacts.append(
-            {
-                "name": first_row["name"],
-                "email": first_row["email"],
-                "phone": first_row["phone"],
-            }
-        )
         for line in reader:
             contacts.append(
                 {"name": line["name"], "email": line["email"], "phone": line["phone"]}
@@ -40,6 +32,21 @@ def write_csv_file(name: str, email: str, phone: str) -> dict[str, str]:
         writer.writerow(contact)
 
         return contact
+
+
+def write_csv_all_file(contacts: list[dict[str, str]]) -> None:
+
+    with open(FILE_NAME, "w") as f:
+        writer = csv.DictWriter(f, fieldnames=["name", "phone", "email"])
+        writer.writeheader()
+
+        for person in contacts:
+            contact: dict[str, str] = {
+                "name": person["name"],
+                "phone": person["phone"],
+                "email": person["email"],
+            }
+            writer.writerow(contact)
 
 
 def view_contact() -> None:
@@ -129,17 +136,23 @@ def add_contact() -> None:
     print(f"Succefully added{contact}")
 
 
-def delete_contact(contacts: list[dict[str, str | None]]) -> None:
+def delete_contact() -> None:
     print("Enter the name you want to delete:")
     del_name = get_name()
+    found: bool = False
+    contacts: list[dict[str, str]] = read_csv_file()
     if del_name == "":
         print("You enter empty name")
         return
     for person in contacts:
         if del_name == person["name"]:
             contacts.remove(person)
+            found = True
             print("Succefully delete")
-            return None
+            break
+    if found:
+        write_csv_all_file(contacts)
+        return
     print(f"There is not {del_name} person")
 
 
@@ -152,8 +165,9 @@ def search_next() -> bool:
     return False
 
 
-def search_contact(contacts: list[dict[str, str | None]]) -> None:
+def search_contact() -> None:
     stop: bool = True
+    contacts: list[dict[str, str]] = read_csv_file()
     while stop:
         print("Enter your name")
         name: str = get_name()
@@ -188,9 +202,11 @@ def get_update_option() -> int | None:
     return None
 
 
-def update_contact(contacts: list[dict[str, str | None]]) -> None:
+def update_contact() -> None:
     print("Enter your name")
     name: str = get_name()
+    passed: bool = False
+    contacts: list[dict[str, str]] = read_csv_file()
     for person in contacts:
         if name == person["name"]:
             print("=========================")
@@ -212,31 +228,37 @@ def update_contact(contacts: list[dict[str, str | None]]) -> None:
                     print("Unable to update name")
                     return
                 person["name"] = name
-                return
+                passed = True
+                break
             elif chose == 2:
                 person["email"] = get_email()
-                return
+                passed = True
+                break
             else:
                 num: str | None = get_num()
                 if num is None:
                     print("Unable to update num")
                     return
                 person["phone"] = num
-                return
+                passed = True
+                break
+    if passed:
+        write_csv_all_file(contacts)
+        return
     print(f"There is not {name}")
 
 
-def choosen_option(pick: int, contact: list[dict[str, str | None]]) -> None:
+def choosen_option(pick: int) -> None:
     if pick == 1:
         view_contact()
     elif pick == 2:
         add_contact()
     elif pick == 3:
-        delete_contact(contact)
+        delete_contact()
     elif pick == 4:
-        search_contact(contact)
+        search_contact()
     elif pick == 5:
-        update_contact(contact)
+        update_contact()
     elif pick == 6:
         view_detail_contact()
     elif pick == 7:
@@ -245,7 +267,7 @@ def choosen_option(pick: int, contact: list[dict[str, str | None]]) -> None:
         print("TRY 1-7")
 
 
-def menu(contact: list[dict[str, str | None]]) -> None:
+def menu() -> None:
     state: bool = True
     while state:
         print("=== Contact info ===")
@@ -258,18 +280,13 @@ def menu(contact: list[dict[str, str | None]]) -> None:
         print("7.) Exit")
         print("====================")
         pick: int = get_choice()
-        choosen_option(pick=pick, contact=contact)
+        choosen_option(pick=pick)
         if pick == 7:
             state = False
 
 
 def main() -> None:
-    list_person: list[dict[str, str | None]] = [
-        {"name": "Ahmed", "phone": "89892", "email": "test@info.com"},
-        {"name": "Faisal", "phone": "67676", "email": "fa@11dev.com"},
-        {"name": "Mariam", "phone": "93284", "email": "mar0@mail.com"},
-    ]
-    menu(list_person)
+    menu()
 
 
 if __name__ == "__main__":
